@@ -1,0 +1,37 @@
+.error-message,
+.error-message-2{
+   opacity: 0;
+   visibility: hidden;
+   color: #d85050;
+   transition: 0.5s ease-in-out;
+}
+.error-message--fade-in{
+   opacity: 1;
+   visibility: visible;
+}
+.input-form{
+   width: 520px;
+}
+.input-form input,
+.input-form button{
+   border: none;
+   outline: none;
+   background-color: rgba(255, 255, 255, 0.1);
+   padding: 15px 30px;
+   border-radius: 4px;
+   margin: 5px;
+   width: 36.5%;
+   color: white;
+   box-sizing: inherit;
+}
+.input-form button{
+   cursor: pointer;
+   font-weight: bold;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   font-family: 'Roboto';
+   transition: 0.5s;
+}
+.input-form button:hover{
+   background-color: rgba(255, 255, 255, 0.3);
+}
