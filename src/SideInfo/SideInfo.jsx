@@ -12,13 +12,11 @@ class SideInfo extends Component{
          avgSum: 0,
       }
       this.state.incomeList = props.incomeList;
-      
-      this.monthsCalculation();
+
    }
 
-
    monthsCalculation = () => {
-      let incomeList = this.state.incomeList;
+      let  { incomeList } = this.props;
       let selectedMonths = [];
       let tempMonth;
       let tempNextMonth;
@@ -87,6 +85,9 @@ class SideInfo extends Component{
 
 
    render(){
+
+      this.monthsCalculation()
+
       return(
          <div className="side-info">
             <h3 className="side-info-header">Лучший месяц</h3>
