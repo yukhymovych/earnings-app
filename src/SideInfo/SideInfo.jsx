@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import './SideInfo.css';
 
-
 class SideInfo extends Component{
    constructor(props){
       super(props);
 
       this.state = {
-         incomeList: [],
          bestMonth: {},
          avgSum: 0,
       }
@@ -15,9 +13,19 @@ class SideInfo extends Component{
 
    }
 
+   componentDidMount () {
+      this.monthsCalculation()
+   }
+
+   componentDidUpdate(prevProps) {
+      if (prevProps !== this.props) {
+         this.monthsCalculation()
+      }
+   }
+
    monthsCalculation = () => {
       let  { incomeList } = this.props;
-      let selectedMonths = [];
+      const selectedMonths = []; // ты не будешь переопределять массив, только манипулировать им. Поэтому конст
       let tempMonth;
       let tempNextMonth;
       let tempYear;
@@ -31,14 +39,6 @@ class SideInfo extends Component{
       let tempAvgSum = 0;
 
       let monthsNames = {1:"Январь", 2:"Февраль", 3:"Март", 4:"Апрель", 5:"Май", 6:"Июнь", 7:"Июль", 8:"Август", 9:"Сентябрь", 10:"Октябрь", 11:"Ноябрь", 12:"Декабрь"};
-
-      /*добавление фиктивного елемента списка исправляет ошибку undefiend во время работы цыкла внизу*/
-      incomeList.push({
-         incomeSum: 0,
-         incomeInfo: "",
-         incomeDate: "",
-         incomeId: ""
-      });
 
       for(var i=0; i < incomeList.length-1; i++){
          tempMonth = parseInt(incomeList[i].incomeDate.slice(3, 5), 10);
@@ -65,9 +65,6 @@ class SideInfo extends Component{
          }
       }
 
-      /*избавляемся от фиктивного елемента добавленного только для цыкла сверху*/
-      incomeList.pop();
-
       for(let i=0; i < selectedMonths.length; i++){
          if(tempBestMonth.monthSum < selectedMonths[i].monthSum){
             tempBestMonth = selectedMonths[i];
@@ -78,15 +75,11 @@ class SideInfo extends Component{
       tempBestMonth.monthNum = monthsNames[tempBestMonth.monthNum];
 
       tempAvgSum /= selectedMonths.length;
-
-      this.state.bestMonth = tempBestMonth;
-      this.state.avgSum = tempAvgSum;
+      this.setState({avgSum: tempAvgSum, bestMonth: tempBestMonth})
    }
 
 
    render(){
-
-      this.monthsCalculation()
 
       return(
          <div className="side-info">
@@ -99,11 +92,21 @@ class SideInfo extends Component{
             </div>
             <h3 className="side-info-header">Средний доход</h3>
             <div className="side-info-item">
-               <p className="side-info-sum">{ this.state.avgSum } <span>грн</span></p>
+               <p className="side-info-sum">{ Math.round(this.state.avgSum) } <span>грн</span></p>
             </div>
          </div>
       )
    }
+}
+
+SideInfo.defaultProps = {
+   incomeList: [{
+      incomeSum: 0,
+         incomeInfo: "",
+         incomeDate: "",
+         incomeId: ""
+   }
+   ]
 }
 
 
