@@ -9,31 +9,27 @@ class IncomeForm extends Component{
          newIncomeInfo: '',
          newIncomeDate: '',
       };
-      this.handleSumInput = this.handleSumInput.bind(this);
-      this.handleInfoInput = this.handleInfoInput.bind(this);
-      this.handleDateInput = this.handleDateInput.bind(this);
-      this.writeIncome = this.writeIncome.bind(this);
    }
 
-   handleSumInput(e){
+   handleSumInput = (e) => {
       this.setState({
          newIncomeSum: e.target.value,
       })
    }
 
-   handleInfoInput(e){
+   handleInfoInput = (e) => {
       this.setState({
          newIncomeInfo: e.target.value,
       })
    }
 
-   handleDateInput(e){
+   handleDateInput = (e) => {
       this.setState({
          newIncomeDate: e.target.value,
       })
    }
 
-   writeIncome(){
+   writeIncome = () => {
       if(!this.state.newIncomeSum.match(/^\d+$/) || this.state.newIncomeInfo.match(/^\s*$/)){
          let errorMessage = document.querySelector(".error-message");
 

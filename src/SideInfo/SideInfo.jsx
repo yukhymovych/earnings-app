@@ -10,7 +10,6 @@ class SideInfo extends Component{
          avgSum: 0,
       }
       this.state.incomeList = props.incomeList;
-
    }
 
    componentDidMount () {
