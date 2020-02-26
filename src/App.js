@@ -44,9 +44,6 @@ class App extends Component{
    componentWillMount(){
       const incomeArray = this.state.fullIncomeList;
 
-      console.log("Built list");
-      console.log(incomeArray);
-
       this.database.on('child_added', snap => {
          incomeArray.push({
             id: snap.key,
@@ -72,7 +69,7 @@ class App extends Component{
          })
       })
 
-      this.database.on('child_changed', snap => {
+      /*this.database.on('child_changed', snap => {
          for(var i=0; i < incomeArray.length; i++){
             if(incomeArray[i].id === snap.key){
                incomeArray[i].incomeSum = snap.val().incomeSum;
@@ -84,7 +81,7 @@ class App extends Component{
             fullIncomeList: incomeArray,
             showIncomeList: incomeArray,
          })
-      })
+      })*/
    }
 
    addIncome(newIncome){
@@ -100,7 +97,7 @@ class App extends Component{
    }
 
    editIncome(incomeId){
-      const incomeArray = this.state.fullIncomeList;
+      const incomeArray = [...this.state.fullIncomeList];
 
       let editFormSaveButton = document.getElementById("editFormSaveButton");
       let editFormCloseButton = document.getElementById("editFormCloseButton");
@@ -145,6 +142,11 @@ class App extends Component{
             {
                for(var i=0; i < incomeArray.length; i++){
                   if(incomeArray[i].id === incomeId){
+
+                     incomeArray[i].incomeSum = parseInt(editFormSum, 10);
+                     incomeArray[i].incomeInfo = editFormInfo;
+                     incomeArray[i].incomeDate = initialFormDate;
+
                      this.database.child(incomeId).set({
                         incomeSum: parseInt(editFormSum, 10),
                         incomeInfo: editFormInfo,
@@ -152,6 +154,11 @@ class App extends Component{
                      });
                   }
                }
+               
+               this.setState({
+                  fullIncomeList: incomeArray,
+                  showIncomeList: incomeArray,
+               });
 
                document.getElementById("income-edit-form").style = 
                "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
@@ -161,14 +168,23 @@ class App extends Component{
             {
                for(var i=0; i < incomeArray.length; i++){
                   if(incomeArray[i].id === incomeId){
+                     
+                     incomeArray[i].incomeSum = parseInt(editFormSum, 10);
+                     incomeArray[i].incomeInfo = editFormInfo;
+                     incomeArray[i].incomeDate = editFormDate;
+
                      this.database.child(incomeId).set({
                         incomeSum: parseInt(editFormSum, 10),
                         incomeInfo: editFormInfo,
                         incomeDate: editFormDate
                      });
-                     
                   }
                }
+               
+               this.setState({
+                  fullIncomeList: incomeArray,
+                  showIncomeList: incomeArray,
+               });
 
                document.getElementById("income-edit-form").style = 
                "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
