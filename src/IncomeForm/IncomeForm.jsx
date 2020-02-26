@@ -63,22 +63,29 @@ class IncomeForm extends Component{
          setTimeout(function(){errorMessage.classList.remove("error-message--fade-in")}, 6000);
       }
       else{
-         if(this.state.newIncomeDate.match(/^\s*$/))
-         {
+         let newIncome;
+
+         if(this.state.newIncomeDate.match(/^\s*$/)){
             var today = new Date();
             let dd = String(today.getDate()).padStart(2, '0');
             let mm = String(today.getMonth() + 1).padStart(2, '0');
             let yyyy = today.getFullYear();
 
             today = dd + '.' + mm + '.' + yyyy;
+
+            newIncome = {
+               incomeSum: parseInt(this.state.newIncomeSum), 
+               incomeInfo: this.state.newIncomeInfo,
+               incomeDate: today};
+         }
+         else {
+            newIncome = {
+               incomeSum: parseInt(this.state.newIncomeSum), 
+               incomeInfo: this.state.newIncomeInfo,
+               incomeDate: this.state.newIncomeDate};
          }
 
-         let arr = {
-            incomeSum: parseInt(this.state.newIncomeSum), 
-            incomeInfo: this.state.newIncomeInfo,
-            incomeDate: today};
-
-         this.props.addIncome(arr);
+         this.props.addIncome(newIncome);
    
          this.setState({
             newIncomeSum: '',

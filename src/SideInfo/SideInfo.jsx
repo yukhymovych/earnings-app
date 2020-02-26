@@ -25,7 +25,7 @@ class SideInfo extends Component{
 
    monthsCalculation = () => {
       let  { incomeList } = this.props;
-      const selectedMonths = []; // ты не будешь переопределять массив, только манипулировать им. Поэтому конст
+      const selectedMonths = [];
       let tempMonth;
       let tempNextMonth;
       let tempYear;

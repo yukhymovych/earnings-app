@@ -4,6 +4,9 @@ import Income from './Income/Income';
 import IncomeForm from './IncomeForm/IncomeForm';
 import SideInfo from './SideInfo/SideInfo';
 
+import { config } from './Config/config';
+import firebase from 'firebase/app';
+import 'firebase/database';
 
 function makeId(length){
    let result           = '';
@@ -28,102 +31,76 @@ class App extends Component{
       this.showSecondOption = this.showSecondOption.bind(this);
       this.showThirdOption = this.showThirdOption.bind(this);
       this.showFourthOption = this.showFourthOption.bind(this);
+
+      this.app = firebase.initializeApp(config);
+      this.database = this.app.database().ref().child('income');
       
       this.state = {
-         fullIncomeList: [ {
-               incomeSum: 2000,
-               incomeInfo: "Предоплата за сайт портфолио",
-               incomeDate: "05.03.2019",
-               incomeId: makeId(20)
-            }, {
-               incomeSum: 3000,
-               incomeInfo: "Предоплата за сайт портфолио",
-               incomeDate: "14.03.2019",
-               incomeId: makeId(20)
-            },{
-               incomeSum: 3000,
-               incomeInfo: "Предоплата за сайт портфолио",
-               incomeDate: "02.05.2019",
-               incomeId: makeId(20)
-            },
-            {
-               incomeSum: 2200,
-               incomeInfo: "Доработка предыдущего проекта",
-               incomeDate: "14.05.2019",
-               incomeId: makeId(20)
-            }, {
-               incomeSum: 4200,
-               incomeInfo: "Изменения структуры сайта",
-               incomeDate: "18.05.2019",
-               incomeId: makeId(20)
-            }
-            , {
-               incomeSum: 1300,
-               incomeInfo: "Мелкие правки корпоративного проекта",
-               incomeDate: "11.07.2019",
-               incomeId: makeId(20)
-            }
-            , {
-               incomeSum: 6450,
-               incomeInfo: "Часть предоплаты за сайт",
-               incomeDate: "21.07.2019",
-               incomeId: makeId(20)
-            }
-            , {
-               incomeSum: 1450,
-               incomeInfo: "Часть предоплаты за сайт",
-               incomeDate: "01.08.2019",
-               incomeId: makeId(20)
-            }
-         ],
+         fullIncomeList: [],
          showIncomeList: [],
       }
-      this.state.showIncomeList = this.state.fullIncomeList;
    }
 
-
-   addIncome(showIncomeList){
+   componentWillMount(){
       const incomeArray = this.state.fullIncomeList;
-      
-      incomeArray.push({ 
-         incomeSum: showIncomeList.incomeSum,
-         incomeInfo: showIncomeList.incomeInfo,
-         incomeDate: showIncomeList.incomeDate,
-         incomeId: makeId(20)
-      });
 
-      this.setState({
-         fullIncomeList: incomeArray,
-         showIncomeList: incomeArray
-      });
+      console.log("Built list");
+      console.log(incomeArray);
+
+      this.database.on('child_added', snap => {
+         incomeArray.push({
+            id: snap.key,
+            incomeSum: snap.val().incomeSum,
+            incomeInfo: snap.val().incomeInfo,
+            incomeDate: snap.val().incomeDate,
+         })
+         this.setState({
+            fullIncomeList: incomeArray,
+            showIncomeList: incomeArray,
+         })
+      })
+
+      this.database.on('child_removed', snap => {
+         for(var i=0; i < incomeArray.length; i++){
+            if(incomeArray[i].id === snap.key){
+               incomeArray.splice(i, 1);
+            }
+         }
+         this.setState({
+            fullIncomeList: incomeArray,
+            showIncomeList: incomeArray,
+         })
+      })
+
+      this.database.on('child_changed', snap => {
+         for(var i=0; i < incomeArray.length; i++){
+            if(incomeArray[i].id === snap.key){
+               incomeArray[i].incomeSum = snap.val().incomeSum;
+               incomeArray[i].incomeInfo = snap.val().incomeInfo;
+               incomeArray[i].incomeDate = snap.val().incomeDate;
+            }
+         }
+         this.setState({
+            fullIncomeList: incomeArray,
+            showIncomeList: incomeArray,
+         })
+      })
    }
 
+   addIncome(newIncome){
+      this.database.push().set({
+         incomeSum: newIncome.incomeSum,
+         incomeInfo: newIncome.incomeInfo,
+         incomeDate: newIncome.incomeDate
+      });
+   }
 
    removeIncome(incomeId){
-      const incomeArray = this.state.fullIncomeList;
-      const shownIncomeArray = this.state.showIncomeList;
-
-      for(let i=0; i < incomeArray.length; i++){
-         if(incomeArray[i].incomeId === incomeId){
-            incomeArray.splice(i, 1);
-         }
-      }
-      for(let i=0; i < shownIncomeArray.length; i++){
-         if(shownIncomeArray[i].incomeId === incomeId){
-            shownIncomeArray.splice(i, 1);
-         }
-      }
-
-      this.setState({
-         fullIncomeList: incomeArray,
-         showIncomeList: shownIncomeArray
-      });
+      this.database.child(incomeId).remove();
    }
-
 
    editIncome(incomeId){
       const incomeArray = this.state.fullIncomeList;
-      const shownIncomeArray = this.state.showIncomeList;
 
       let editFormSaveButton = document.getElementById("editFormSaveButton");
       let editFormCloseButton = document.getElementById("editFormCloseButton");
@@ -136,9 +113,9 @@ class App extends Component{
 
       document.getElementById("income-edit-form").style = 
       "transform: translate(-50%, -70%); opacity: 1; visibility: visible";
-      
+
       for(let i=0; i < incomeArray.length; i++){
-         if(incomeArray[i].incomeId === incomeId){
+         if(incomeArray[i].id === incomeId){
             document.getElementById("edit-form-sum").value = incomeArray[i].incomeSum;
             document.getElementById("edit-form-info").value = incomeArray[i].incomeInfo;
             document.getElementById("edit-form-date").value = incomeArray[i].incomeDate;
@@ -148,7 +125,7 @@ class App extends Component{
 
       editFormSaveButton.onclick = function(){
          for(let i=0; i < incomeArray.length; i++){
-            if(incomeArray[i].incomeId === incomeId){
+            if(incomeArray[i].id === incomeId){
                editFormSum = document.getElementById("edit-form-sum").value;
                editFormInfo = document.getElementById("edit-form-info").value;
                editFormDate = document.getElementById("edit-form-date").value;
@@ -166,62 +143,38 @@ class App extends Component{
          else{
             if(editFormDate.match(/^\s*$/))
             {
-               for(let i=0; i < incomeArray.length; i++){
-                  if(incomeArray[i].incomeId === incomeId){
-                     incomeArray[i] = {
-                        incomeSum:  parseInt(editFormSum, 10),
+               for(var i=0; i < incomeArray.length; i++){
+                  if(incomeArray[i].id === incomeId){
+                     this.database.child(incomeId).set({
+                        incomeSum: parseInt(editFormSum, 10),
                         incomeInfo: editFormInfo,
-                        incomeDate: initialFormDate,
-                        incomeId: makeId(20)
-                     };
+                        incomeDate: initialFormDate
+                     });
                   }
                }
-               for(let i=0; i < shownIncomeArray.length; i++){
-                  if(shownIncomeArray[i].incomeId === incomeId){
-                     shownIncomeArray[i] = {
-                        incomeSum:  parseInt(editFormSum, 10),
-                        incomeInfo: editFormInfo,
-                        incomeDate: initialFormDate,
-                        incomeId: makeId(20)
-                     };
-                  }
-               }
+
                document.getElementById("income-edit-form").style = 
                "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
                errorMessage.classList.remove("error-message--fade-in");
             }
             else
             {
-               for(let i=0; i < incomeArray.length; i++){
-                  if(incomeArray[i].incomeId === incomeId){
-                     incomeArray[i] = {
-                        incomeSum:  parseInt(editFormSum, 10),
+               for(var i=0; i < incomeArray.length; i++){
+                  if(incomeArray[i].id === incomeId){
+                     this.database.child(incomeId).set({
+                        incomeSum: parseInt(editFormSum, 10),
                         incomeInfo: editFormInfo,
-                        incomeDate: editFormDate,
-                        incomeId: makeId(20)
-                     };
+                        incomeDate: editFormDate
+                     });
+                     
                   }
                }
-               for(let i=0; i < shownIncomeArray.length; i++){
-                  if(shownIncomeArray[i].incomeId === incomeId){
-                     shownIncomeArray[i] = {
-                        incomeSum:  parseInt(editFormSum, 10),
-                        incomeInfo: editFormInfo,
-                        incomeDate: editFormDate,
-                        incomeId: makeId(20)
-                     };
-                  }
-               }
+
                document.getElementById("income-edit-form").style = 
                "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
                errorMessage.classList.remove("error-message--fade-in");
             }
          }
-
-         this.setState({
-            fullIncomeList: incomeArray,
-            showIncomeList: shownIncomeArray
-         });
       }.bind(this);
 
       editFormCloseButton.onclick = function(){
@@ -230,7 +183,6 @@ class App extends Component{
          errorMessage.classList.remove("error-message--fade-in");
       };
    }
-
 
    showFirstOption(){
       const incomeArray = [];
@@ -266,7 +218,6 @@ class App extends Component{
          showIncomeList: incomeArray
       });
    }
-
 
    showSecondOption(){
       const incomeArray = [];
@@ -304,7 +255,6 @@ class App extends Component{
       });
    }
 
-
    showThirdOption(){
       const incomeArray = [];
       const shownIncomeArray = this.state.fullIncomeList;
@@ -340,20 +290,12 @@ class App extends Component{
       });
    }
 
-
    showFourthOption(){
       const incomeArray = this.state.fullIncomeList;
 
       this.setState({
          showIncomeList: incomeArray
       });
-   }
-
-   componentDidUpdate(){
-      console.log("Весь список");
-      console.log(this.state.fullIncomeList);
-      console.log("Отображаемый список");
-      console.log(this.state.showIncomeList);
    }
 
 
@@ -363,13 +305,15 @@ class App extends Component{
             <div className="list-place">
                <h1>Список записей</h1>
                {
-                  this.state.showIncomeList.map((showIncomeList) => {
+                  this.state.showIncomeList.map((item) => {
                      return(
-                        <Income incomeSum={showIncomeList.incomeSum} 
-                           incomeInfo={showIncomeList.incomeInfo}
-                           incomeDate={showIncomeList.incomeDate}
-                           incomeId={showIncomeList.incomeId}
-                           key={showIncomeList.incomeId} 
+                        <Income incomeSum={item.incomeSum} 
+                           incomeInfo={item.incomeInfo}
+                           incomeDate={item.incomeDate}
+                           incomeId={item.id}
+
+                           key={item.id} 
+
                            removeIncome={this.removeIncome}
                            editIncome={this.editIncome} />
                      )
