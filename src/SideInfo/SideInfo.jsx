@@ -9,7 +9,7 @@ class SideInfo extends Component{
          bestMonth: {},
          avgSum: 0,
       }
-      this.state.incomeList = props.incomeList;
+      this.state.incomeList = props.fullIncomeList;
    }
 
    componentDidMount () {
@@ -23,10 +23,10 @@ class SideInfo extends Component{
    }
 
    monthsCalculation = () => {
-      let  { incomeList } = this.props;
-      const selectedMonths = [];
+      let { incomeList } = this.props;
+      let selectedMonths = [];
       let tempMonth;
-      let tempNextMonth;
+      let tempPrevMonth;
       let tempYear;
       let tempSum = 0;
 
@@ -36,50 +36,79 @@ class SideInfo extends Component{
          monthYear: "0"
       };
       let tempAvgSum = 0;
-
+      
       let monthsNames = {1:"Январь", 2:"Февраль", 3:"Март", 4:"Апрель", 5:"Май", 6:"Июнь", 7:"Июль", 8:"Август", 9:"Сентябрь", 10:"Октябрь", 11:"Ноябрь", 12:"Декабрь"};
 
-      for(var i=0; i < incomeList.length-1; i++){
+      for (let i=0; i < incomeList.length; i++) {
          tempMonth = parseInt(incomeList[i].incomeDate.slice(3, 5), 10);
          tempYear = parseInt(incomeList[i].incomeDate.slice(6, 11), 10);
-         
-         if(i === 0){
+
+         if (i === 0) {
             tempSum += incomeList[i].incomeSum;
-         }
-         else{
-            tempNextMonth = parseInt(incomeList[i+1].incomeDate.slice(3, 5), 10);
-            
-            if(tempMonth !== tempNextMonth){
-               tempSum += incomeList[i].incomeSum;
+
+            if (incomeList.length === 1) {
                selectedMonths.push({ 
                   monthSum: tempSum,
                   monthNum: tempMonth,
                   monthYear: tempYear
                });
+            } 
+         }
+         else {
+            tempPrevMonth = parseInt(incomeList[i-1].incomeDate.slice(3, 5), 10);
+
+            if (tempMonth !== tempPrevMonth){
+               tempMonth = parseInt(incomeList[i-1].incomeDate.slice(3, 5), 10);
+               tempYear = parseInt(incomeList[i-1].incomeDate.slice(6, 11), 10);
+
+               selectedMonths.push({ 
+                  monthSum: tempSum,
+                  monthNum: tempMonth,
+                  monthYear: tempYear
+               });
+
                tempSum = 0;
+               tempSum += incomeList[i].incomeSum;
+
+               if (i + 1 === incomeList.length) {
+                  tempMonth = parseInt(incomeList[i].incomeDate.slice(3, 5), 10);
+                  tempYear = parseInt(incomeList[i].incomeDate.slice(6, 11), 10);
+
+                  selectedMonths.push({ 
+                     monthSum: tempSum,
+                     monthNum: tempMonth,
+                     monthYear: tempYear
+                  });
+               }
             }
-            else{
+            else {
                tempSum += incomeList[i].incomeSum;
             }
          }
+
+         tempAvgSum += incomeList[i].incomeSum;
       }
 
-      for(let i=0; i < selectedMonths.length; i++){
-         if(tempBestMonth.monthSum < selectedMonths[i].monthSum){
+      for (let i=0; i < selectedMonths.length; i++) {
+         if (tempBestMonth.monthSum < selectedMonths[i].monthSum) {
             tempBestMonth = selectedMonths[i];
          }
-         tempAvgSum += selectedMonths[i].monthSum;
       }
 
       tempBestMonth.monthNum = monthsNames[tempBestMonth.monthNum];
 
-      tempAvgSum /= selectedMonths.length;
-      this.setState({avgSum: tempAvgSum, bestMonth: tempBestMonth})
+      if (selectedMonths.length > 0) {
+         tempAvgSum /= selectedMonths.length;
+      }
+
+      this.setState({
+         avgSum: tempAvgSum, 
+         bestMonth: tempBestMonth
+      });
    }
 
 
    render(){
-
       return(
          <div className="side-info">
             <h3 className="side-info-header">Лучший месяц</h3>
@@ -100,12 +129,11 @@ class SideInfo extends Component{
 
 SideInfo.defaultProps = {
    incomeList: [{
+      id: "",
       incomeSum: 0,
-         incomeInfo: "",
-         incomeDate: "",
-         incomeId: ""
-   }
-   ]
+      incomeInfo: "",
+      incomeDate: "",
+   }]
 }
 
 

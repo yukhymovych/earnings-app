@@ -17,8 +17,7 @@ class App extends Component{
       this.database = this.app.database().ref().child('income');
       
       this.state = {
-         fullIncomeList: [],
-         showIncomeList: [],
+         fullIncomeList: []
       }
    }
 
@@ -31,12 +30,11 @@ class App extends Component{
             incomeSum: snap.val().incomeSum,
             incomeInfo: snap.val().incomeInfo,
             incomeDate: snap.val().incomeDate,
-         })
+         });
          this.setState({
-            fullIncomeList: incomeArray,
-            showIncomeList: incomeArray,
-         })
-      })
+            fullIncomeList: incomeArray
+         });
+      });
 
       this.database.on('child_removed', snap => {
          for(var i=0; i < incomeArray.length; i++){
@@ -45,10 +43,9 @@ class App extends Component{
             }
          }
          this.setState({
-            fullIncomeList: incomeArray,
-            showIncomeList: incomeArray,
-         })
-      })
+            fullIncomeList: incomeArray
+         });
+      });
 
       this.database.on('child_changed', snap => {
          for(var i=0; i < incomeArray.length; i++){
@@ -59,10 +56,9 @@ class App extends Component{
             }
          }
          this.setState({
-            fullIncomeList: incomeArray,
-            showIncomeList: incomeArray,
-         })
-      })
+            fullIncomeList: incomeArray
+         });
+      });
    }
 
    addIncome = (newIncome) => {
@@ -123,7 +119,6 @@ class App extends Component{
             {
                for(var i=0; i < incomeArray.length; i++){
                   if(incomeArray[i].id === incomeId){
-
                      this.database.child(incomeId).set({
                         incomeSum: parseInt(editFormSum, 10),
                         incomeInfo: editFormInfo,
@@ -140,8 +135,6 @@ class App extends Component{
             {
                for(var i=0; i < incomeArray.length; i++){
                   if(incomeArray[i].id === incomeId){
-
-
                      this.database.child(incomeId).set({
                         incomeSum: parseInt(editFormSum, 10),
                         incomeInfo: editFormInfo,
@@ -195,7 +188,7 @@ class App extends Component{
       }
 
       this.setState({
-         showIncomeList: incomeArray
+         fullIncomeList: incomeArray
       });
    }
 
@@ -231,7 +224,7 @@ class App extends Component{
       }
       
       this.setState({
-         showIncomeList: incomeArray
+         fullIncomeList: incomeArray
       });
    }
 
@@ -266,7 +259,7 @@ class App extends Component{
       }
 
       this.setState({
-         showIncomeList: incomeArray
+         fullIncomeList: incomeArray
       });
    }
 
@@ -274,7 +267,7 @@ class App extends Component{
       const incomeArray = this.state.fullIncomeList;
 
       this.setState({
-         showIncomeList: incomeArray
+         fullIncomeList: incomeArray
       });
    }
 
@@ -285,7 +278,7 @@ class App extends Component{
             <div className="list-place">
                <h1>Список записей</h1>
                {
-                  this.state.showIncomeList.map((item) => {
+                  this.state.fullIncomeList.map((item) => {
                      return(
                         <Income incomeSum={item.incomeSum} 
                            incomeInfo={item.incomeInfo}
@@ -322,7 +315,7 @@ class App extends Component{
                </div>
             </div>
 
-            <SideInfo incomeList={this.state.showIncomeList} />
+            <SideInfo incomeList={this.state.fullIncomeList} />
          </div>
       );
    }
