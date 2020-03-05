@@ -3,6 +3,7 @@ import './App.css';
 import Income from './Income/Income';
 import IncomeForm from './IncomeForm/IncomeForm';
 import SideInfo from './SideInfo/SideInfo';
+import SearchForm from './SearchForm/SearchForm';
 
 import { config } from './Config/config';
 import firebase from 'firebase/app';
@@ -17,6 +18,7 @@ class App extends Component{
       this.database = this.app.database().ref().child('income');
       
       this.state = {
+         initialIncomeList: [],
          fullIncomeList: []
       }
    }
@@ -32,6 +34,7 @@ class App extends Component{
             incomeDate: snap.val().incomeDate,
          });
          this.setState({
+            initialIncomeList: incomeArray,
             fullIncomeList: incomeArray
          });
       });
@@ -43,6 +46,7 @@ class App extends Component{
             }
          }
          this.setState({
+            initialIncomeList: incomeArray,
             fullIncomeList: incomeArray
          });
       });
@@ -56,6 +60,7 @@ class App extends Component{
             }
          }
          this.setState({
+            initialIncomeList: incomeArray,
             fullIncomeList: incomeArray
          });
       });
@@ -159,7 +164,7 @@ class App extends Component{
 
    showFirstOption = () => {
       const incomeArray = [];
-      const shownIncomeArray = this.state.fullIncomeList;
+      const shownIncomeArray = [...this.state.fullIncomeList];
 
       let elementDate;
       let presentDate = new Date();
@@ -178,11 +183,11 @@ class App extends Component{
          elementDate  = new Date(tempYear, tempMonth-1, tempDay);
 
          if(elementDate >= pastDate.setDate(1)){
-            incomeArray.push({ 
+            incomeArray.push({
+               id: shownIncomeArray[i].id,
                incomeSum: shownIncomeArray[i].incomeSum,
                incomeInfo: shownIncomeArray[i].incomeInfo,
-               incomeDate: shownIncomeArray[i].incomeDate,
-               incomeId: shownIncomeArray[i].incomeId
+               incomeDate: shownIncomeArray[i].incomeDate
             });
          }
       }
@@ -194,7 +199,7 @@ class App extends Component{
 
    showSecondOption = () => {
       const incomeArray = [];
-      const shownIncomeArray = this.state.fullIncomeList;
+      const shownIncomeArray = [...this.state.fullIncomeList];
 
       let elementDate;
       let presentDate = new Date();
@@ -214,10 +219,10 @@ class App extends Component{
 
          if(elementDate >= pastDate.setDate(1)){
             incomeArray.push({ 
+               id: shownIncomeArray[i].id,
                incomeSum: shownIncomeArray[i].incomeSum,
                incomeInfo: shownIncomeArray[i].incomeInfo,
-               incomeDate: shownIncomeArray[i].incomeDate,
-               incomeId: shownIncomeArray[i].incomeId
+               incomeDate: shownIncomeArray[i].incomeDate
             });
 
          }
@@ -230,7 +235,7 @@ class App extends Component{
 
    showThirdOption = () => {
       const incomeArray = [];
-      const shownIncomeArray = this.state.fullIncomeList;
+      const shownIncomeArray = [...this.state.fullIncomeList];
 
       let elementDate;
       let presentDate = new Date();
@@ -250,10 +255,10 @@ class App extends Component{
 
          if(elementDate >= pastDate.setDate(1)){
             incomeArray.push({ 
+               id: shownIncomeArray[i].id,
                incomeSum: shownIncomeArray[i].incomeSum,
                incomeInfo: shownIncomeArray[i].incomeInfo,
-               incomeDate: shownIncomeArray[i].incomeDate,
-               incomeId: shownIncomeArray[i].incomeId
+               incomeDate: shownIncomeArray[i].incomeDate
             });
          }
       }
@@ -264,11 +269,46 @@ class App extends Component{
    }
 
    showFourthOption = () => {
-      const incomeArray = this.state.fullIncomeList;
-
       this.setState({
-         fullIncomeList: incomeArray
+         fullIncomeList: this.state.initialIncomeList,
       });
+   }
+
+   searching = (searchText) => {
+      const incomeArray = [];
+      const initialIncomeArray = [...this.state.initialIncomeList];
+
+      let tempSum = '';
+      let tempInfo = '';
+      let tempDate = '';
+
+      if (!searchText.match(/^\s*$/)) {
+         for (let i=0; i < initialIncomeArray.length; i++){
+            tempSum = initialIncomeArray[i].incomeSum.toString();
+            tempInfo = initialIncomeArray[i].incomeInfo;
+            tempDate = initialIncomeArray[i].incomeDate;
+   
+            if (tempSum.indexOf(searchText) != -1
+            || tempInfo.toLowerCase().indexOf(searchText.toLowerCase()) != -1 
+            || tempDate.indexOf(searchText) != -1) {
+               incomeArray.push({
+                  id: initialIncomeArray[i].id,
+                  incomeSum: initialIncomeArray[i].incomeSum,
+                  incomeInfo: initialIncomeArray[i].incomeInfo,
+                  incomeDate: initialIncomeArray[i].incomeDate
+               });
+            }
+         }
+   
+         this.setState({
+            fullIncomeList: incomeArray,
+         });
+      }
+      else {
+         this.setState({
+            fullIncomeList: this.state.initialIncomeList,
+         });
+      }
    }
 
 
@@ -313,6 +353,7 @@ class App extends Component{
                   <span className="option-button" onClick={this.showThirdOption}>За 6 месяцев</span>
                   <span className="option-button" onClick={this.showFourthOption}>За все время</span>
                </div>
+               <SearchForm searching={this.searching} />
             </div>
 
             <SideInfo incomeList={this.state.fullIncomeList} />

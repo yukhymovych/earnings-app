@@ -8,6 +8,7 @@ class SideInfo extends Component{
       this.state = {
          bestMonth: {},
          avgSum: 0,
+         worstMonth: {},
       }
       this.state.incomeList = props.fullIncomeList;
    }
@@ -31,6 +32,11 @@ class SideInfo extends Component{
       let tempSum = 0;
 
       let tempBestMonth = {
+         monthSum: 0,
+         monthNum: 0,
+         monthYear: "0"
+      };
+      let tempWorstMonth = {
          monthSum: 0,
          monthNum: 0,
          monthYear: "0"
@@ -90,12 +96,20 @@ class SideInfo extends Component{
       }
 
       for (let i=0; i < selectedMonths.length; i++) {
+         if (i === 0) {
+            tempWorstMonth = selectedMonths[i];
+         }
+
          if (tempBestMonth.monthSum < selectedMonths[i].monthSum) {
             tempBestMonth = selectedMonths[i];
+         }
+         if (!(tempWorstMonth.monthSum < selectedMonths[i].monthSum)) {
+            tempWorstMonth = selectedMonths[i];
          }
       }
 
       tempBestMonth.monthNum = monthsNames[tempBestMonth.monthNum];
+      tempWorstMonth.monthNum = monthsNames[tempWorstMonth.monthNum];
 
       if (selectedMonths.length > 0) {
          tempAvgSum /= selectedMonths.length;
@@ -103,7 +117,8 @@ class SideInfo extends Component{
 
       this.setState({
          avgSum: tempAvgSum, 
-         bestMonth: tempBestMonth
+         bestMonth: tempBestMonth,
+         worstMonth: tempWorstMonth,
       });
    }
 
@@ -121,6 +136,13 @@ class SideInfo extends Component{
             <h3 className="side-info-header">Средний доход</h3>
             <div className="side-info-item">
                <p className="side-info-sum">{ Math.round(this.state.avgSum) } <span>грн</span></p>
+            </div>
+            <h3 className="side-info-header">Худший месяц</h3>
+            <div className="side-info-item">
+               <p className="side-info-date">
+                  { this.state.worstMonth.monthNum } { this.state.worstMonth.monthYear }
+               </p>
+               <p className="side-info-sum">{ this.state.worstMonth.monthSum } <span>грн</span></p>
             </div>
          </div>
       )
