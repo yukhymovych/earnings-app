@@ -4,6 +4,8 @@ import Income from './Income/Income';
 import IncomeForm from './IncomeForm/IncomeForm';
 import SideInfo from './SideInfo/SideInfo';
 import SearchForm from './SearchForm/SearchForm';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { config } from './Config/config';
 import firebase from 'firebase/app';
@@ -16,14 +18,18 @@ class App extends Component{
      
       this.app = firebase.initializeApp(config);
       this.database = this.app.database().ref().child('income');
+
+      this.incomeEditForm = React.createRef();
+      this.errorMessage2 = React.createRef();
       
       this.state = {
          initialIncomeList: [],
-         fullIncomeList: []
+         fullIncomeList: [],
+         editIncomeDate: '',
       }
    }
 
-   componentWillMount(){
+   componentDidMount(){
       const incomeArray = this.state.fullIncomeList;
 
       this.database.on('child_added', snap => {
@@ -83,14 +89,14 @@ class App extends Component{
 
       let editFormSaveButton = document.getElementById("editFormSaveButton");
       let editFormCloseButton = document.getElementById("editFormCloseButton");
-      let errorMessage = document.querySelector(".error-message-2");
+      let errorMessage = this.errorMessage2.current;
 
       let editFormSum;
       let editFormInfo;
       let editFormDate;
       let initialFormDate;
 
-      document.getElementById("income-edit-form").style = 
+      this.incomeEditForm.current.style = 
       "transform: translate(-50%, -70%); opacity: 1; visibility: visible";
 
       for(let i=0; i < incomeArray.length; i++){
@@ -102,7 +108,7 @@ class App extends Component{
          }
       }
 
-      editFormSaveButton.onclick = function(){
+      editFormSaveButton.onclick = () => {
          for(let i=0; i < incomeArray.length; i++){
             if(incomeArray[i].id === incomeId){
                editFormSum = document.getElementById("edit-form-sum").value;
@@ -112,11 +118,11 @@ class App extends Component{
          }
          
          if(!editFormSum.match(/^\d+$/) || editFormInfo.match(/^\s*$/)){
-            document.querySelector(".error-message-2").textContent="Некоторые из полей пусты или имеют неверные данные.";
+            this.errorMessage2.current.textContent = "Некоторые из полей пусты или имеют неверные данные.";
             errorMessage.classList.add("error-message--fade-in");
          }
          else if(!editFormDate.match(/^\s*$/) && !editFormDate.match(/^(0[1-9]|1\d|2\d|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$/)){
-            document.querySelector(".error-message-2").textContent="Вы ввели неправильный формат даты. Верный - дд.мм.гггг";
+            this.errorMessage2.current.textContent = "Вы ввели неправильный формат даты. Верный - дд.мм.гггг";
             errorMessage.classList.add("error-message--fade-in");
          }
          else{
@@ -132,8 +138,7 @@ class App extends Component{
                   }
                }
                
-               document.getElementById("income-edit-form").style = 
-               "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
+               this.incomeEditForm.current.style = "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
                errorMessage.classList.remove("error-message--fade-in");
             }
             else
@@ -148,18 +153,22 @@ class App extends Component{
                   }
                }
                
-               document.getElementById("income-edit-form").style = 
-               "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
+               this.incomeEditForm.current.style = "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
                errorMessage.classList.remove("error-message--fade-in");
             }
          }
-      }.bind(this);
+      }
 
-      editFormCloseButton.onclick = function(){
-         document.getElementById("income-edit-form").style = 
-         "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
+      editFormCloseButton.onclick = () => {
+         this.incomeEditForm.current.style = "transform: translate(-50%, -40%); opacity: 0; visibility: hidden";
          errorMessage.classList.remove("error-message--fade-in");
-      };
+      }
+   }
+
+   handleDateInput = (date) => {
+      this.setState({
+         editIncomeDate: date,
+      });
    }
 
    showFirstOption = () => {
@@ -288,9 +297,9 @@ class App extends Component{
             tempInfo = initialIncomeArray[i].incomeInfo;
             tempDate = initialIncomeArray[i].incomeDate;
    
-            if (tempSum.indexOf(searchText) != -1
-            || tempInfo.toLowerCase().indexOf(searchText.toLowerCase()) != -1 
-            || tempDate.indexOf(searchText) != -1) {
+            if (tempSum.indexOf(searchText) !== -1
+            || tempInfo.toLowerCase().indexOf(searchText.toLowerCase()) !== -1 
+            || tempDate.indexOf(searchText) !== -1) {
                incomeArray.push({
                   id: initialIncomeArray[i].id,
                   incomeSum: initialIncomeArray[i].incomeSum,
@@ -335,14 +344,17 @@ class App extends Component{
                <IncomeForm addIncome={this.addIncome} />
             </div>
 
-            <div id="income-edit-form" className="income-edit-form">
+            <div id="income-edit-form" className="income-edit-form" ref={this.incomeEditForm}>
                <h3 className="edit-form-header">Редактирование записи</h3>
                <input id="edit-form-sum" type="text" />
-               <input id="edit-form-date" type="text" />
+               <DatePicker id="edit-form-date"
+               selected={this.state.editIncomeDate}
+               onChange={this.handleDateInput}
+               dateFormat="dd.MM.yyyy" />
                <textarea id="edit-form-info" type="text" />
                <span id="editFormSaveButton" className="save-button">Сохранить</span>
                <span id="editFormCloseButton" className="close-button">Отменить</span>
-               <p className="error-message-2">Вы ввели неверные данные. Вы ввели неверные данные.</p>
+               <p className="error-message-2" ref={this.errorMessage2}>Вы ввели неверные данные. Вы ввели неверные данные.</p>
             </div>
 
             <div className="option-menu">

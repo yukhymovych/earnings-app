@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './IncomeForm.css';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 class IncomeForm extends Component{
    constructor(props){
@@ -7,78 +9,78 @@ class IncomeForm extends Component{
       this.state = {
          newIncomeSum: '',
          newIncomeInfo: '',
-         newIncomeDate: '',
+         newIncomeDate: new Date(),
       };
+
+      this.errorMessage = React.createRef();
    }
 
    handleSumInput = (e) => {
       this.setState({
          newIncomeSum: e.target.value,
-      })
+      });
    }
 
    handleInfoInput = (e) => {
       this.setState({
          newIncomeInfo: e.target.value,
-      })
+      });
    }
 
-   handleDateInput = (e) => {
+   handleDateInput = (date) => {
       this.setState({
-         newIncomeDate: e.target.value,
-      })
+         newIncomeDate: date,
+      });
    }
 
    writeIncome = () => {
-      if(!this.state.newIncomeSum.match(/^\d+$/) || this.state.newIncomeInfo.match(/^\s*$/)){
-         let errorMessage = document.querySelector(".error-message");
+      if (!this.state.newIncomeSum.match(/^\d+$/) || this.state.newIncomeInfo.match(/^\s*$/)){
+         let errorMessage = this.errorMessage.current;
 
          this.setState({
             newIncomeSum: '',
             newIncomeInfo: '',
-            newIncomeDate: '',
-         })
+            newIncomeDate: new Date(),
+         });
 
-         document.querySelector(".error-message").textContent="Некоторые из полей пусты или имеют неверные данные.";
-
-         errorMessage.classList.add("error-message--fade-in");
-         setTimeout(function(){errorMessage.classList.remove("error-message--fade-in")}, 6000);
-      }
-      else if(!this.state.newIncomeDate.match(/^\s*$/) && !this.state.newIncomeDate.match(/^(0[1-9]|1\d|2\d|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$/)){
-         let errorMessage = document.querySelector(".error-message");
-
-         this.setState({
-            newIncomeSum: '',
-            newIncomeInfo: '',
-            newIncomeDate: '',
-         })
-
-         document.querySelector(".error-message").textContent="Вы ввели неправильный формат даты. Верный - дд.мм.гггг";
+         this.errorMessage.current.textContent="Некоторые из полей пусты или имеют неверные данные.";
 
          errorMessage.classList.add("error-message--fade-in");
          setTimeout(function(){errorMessage.classList.remove("error-message--fade-in")}, 6000);
       }
-      else{
-         let newIncome;
+      else {
+         let newIncome,
+             dd,
+             mm,
+             yyyy,
+             today;
 
-         if(this.state.newIncomeDate.match(/^\s*$/)){
-            var today = new Date();
-            let dd = String(today.getDate()).padStart(2, '0');
-            let mm = String(today.getMonth() + 1).padStart(2, '0');
-            let yyyy = today.getFullYear();
+         if (this.state.newIncomeDate == null){
+            today = new Date();
+            dd = String(today.getDate()).padStart(2, '0');
+            mm = String(today.getMonth() + 1).padStart(2, '0');
+            yyyy = today.getFullYear();
 
             today = dd + '.' + mm + '.' + yyyy;
 
             newIncome = {
                incomeSum: parseInt(this.state.newIncomeSum), 
                incomeInfo: this.state.newIncomeInfo,
-               incomeDate: today};
+               incomeDate: today
+            };
          }
          else {
+            dd = String(this.state.newIncomeDate.getDate()).padStart(2, '0');
+            mm = String(this.state.newIncomeDate.getMonth() + 1).padStart(2, '0');
+            yyyy = this.state.newIncomeDate.getFullYear();
+
+            today = dd + '.' + mm + '.' + yyyy;
+
             newIncome = {
                incomeSum: parseInt(this.state.newIncomeSum), 
                incomeInfo: this.state.newIncomeInfo,
-               incomeDate: this.state.newIncomeDate};
+               incomeDate: today
+            };
          }
 
          this.props.addIncome(newIncome);
@@ -86,13 +88,13 @@ class IncomeForm extends Component{
          this.setState({
             newIncomeSum: '',
             newIncomeInfo: '',
-            newIncomeDate: '',
+            newIncomeDate: new Date(),
          });
       }
    }
 
-   render(){
-      return(
+   render() {
+      return (
          <div className="input-form">
             <input className="sum-input" 
             placeholder="Сумма"
@@ -104,15 +106,15 @@ class IncomeForm extends Component{
             value={this.state.newIncomeInfo} 
             onChange={this.handleInfoInput} />
 
-            <input className="date-input" 
-            placeholder="Дата (может быть пустым)"
-            value={this.state.newIncomeDate} 
-            onChange={this.handleDateInput} />
+            <DatePicker
+            selected={this.state.newIncomeDate}
+            onChange={this.handleDateInput}
+            dateFormat="dd.MM.yyyy" />
             
             <button className="input-button"
             onClick={this.writeIncome}>Добавить запись</button>
 
-            <p className="error-message">Вы ввели неверные данные.</p>
+            <p className="error-message" ref={this.errorMessage}>Вы ввели неверные данные.</p>
          </div>
       )
    }
