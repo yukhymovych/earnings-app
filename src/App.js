@@ -6,6 +6,7 @@ import SideInfo from './SideInfo/SideInfo';
 import SearchForm from './SearchForm/SearchForm';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import IncomeMonth from './IncomeMonth/IncomeMonth';
 
 import { config } from './Config/config';
 import firebase from 'firebase/app';
@@ -342,6 +343,10 @@ class App extends Component{
                   })
                }
                <IncomeForm addIncome={this.addIncome} />
+            </div>
+
+            <div className="month-list">
+               <IncomeMonth incomeList={this.state.fullIncomeList} />
             </div>
 
             <div id="income-edit-form" className="income-edit-form" ref={this.incomeEditForm}>
