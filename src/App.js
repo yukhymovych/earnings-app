@@ -346,7 +346,7 @@ class App extends Component{
             </div>
 
             <div className="month-list">
-               <IncomeMonth incomeList={this.state.fullIncomeList} />
+               <IncomeMonth incomeList={this.state.initialIncomeList} />
             </div>
 
             <div id="income-edit-form" className="income-edit-form" ref={this.incomeEditForm}>
@@ -373,7 +373,7 @@ class App extends Component{
                <SearchForm searching={this.searching} />
             </div>
 
-            <SideInfo incomeList={this.state.fullIncomeList} />
+            <SideInfo incomeList={this.state.initialIncomeList} />
          </div>
       );
    }

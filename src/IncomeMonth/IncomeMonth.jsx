@@ -14,7 +14,7 @@ class IncomeMonth extends Component {
       let tempObject = {};
 
       if (prevProps !== this.props) {
-         tempObject = logic.statsCalculation(this.props);
+         tempObject = logic.statsCalculation(this.props.incomeList);
          
          this.setState({
             fullMonthList: tempObject.monthsList,

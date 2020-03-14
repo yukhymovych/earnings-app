@@ -1,6 +1,6 @@
-export function statsCalculation (list) {
-   let { incomeList } = list; // спросить у Артура почему эта запись чувстсительна к названию переменной
-                              // которая идет с файла app.js
+export function statsCalculation (data) {
+   let incomeList = data;
+
    let selectedMonths = [];
    let tempMonth;
    let tempPrevMonth;

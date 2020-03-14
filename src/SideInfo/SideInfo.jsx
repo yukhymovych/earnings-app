@@ -17,7 +17,7 @@ class SideInfo extends Component{
       let tempObject = {};
 
       if (prevProps !== this.props) {
-         tempObject = logic.statsCalculation(this.props);
+         tempObject = logic.statsCalculation(this.props.incomeList);
 
          if (tempObject.worstMonth.monthNum != undefined) {
             this.setState({
