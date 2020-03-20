@@ -96,6 +96,7 @@ class IncomeForm extends Component{
    render() {
       return (
          <div className="input-form">
+            <h3 className="input-form__header">Добавление записи</h3>
             <input className="sum-input" 
             placeholder="Сумма"
             value={this.state.newIncomeSum} 

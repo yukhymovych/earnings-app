@@ -18,7 +18,7 @@ class App extends Component{
       super(props);
      
       this.app = firebase.initializeApp(config);
-      this.database = this.app.database().ref().child('income');
+      this.database = this.app.database().ref().child('income'); //test
 
       this.incomeEditForm = React.createRef();
       this.errorMessage2 = React.createRef();
@@ -144,7 +144,7 @@ class App extends Component{
             }
             else
             {
-               for(var i=0; i < incomeArray.length; i++){
+               for(let i=0; i < incomeArray.length; i++){
                   if(incomeArray[i].id === incomeId){
                      this.database.child(incomeId).set({
                         incomeSum: parseInt(editFormSum, 10),
@@ -325,28 +325,50 @@ class App extends Component{
    render(){
       return(
          <div className="app-wrapper">
-            <div className="list-place">
-               <h1>Список записей</h1>
-               {
-                  this.state.fullIncomeList.map((item) => {
-                     return(
-                        <Income incomeSum={item.incomeSum} 
-                           incomeInfo={item.incomeInfo}
-                           incomeDate={item.incomeDate}
-                           incomeId={item.id}
+            <div className="container">
+               <div className="container__item">
+                  <div className="option-menu">
+                     <h3 className="option-menu-header">Отображения записей</h3>
+                     <div className="option-menu-item">
+                        <span className="option-button" onClick={this.showFirstOption}>За 1 месяц</span>
+                        <span className="option-button" onClick={this.showSecondOption}>За 3 месяца</span>
+                        <span className="option-button" onClick={this.showThirdOption}>За 6 месяцев</span>
+                        <span className="option-button" onClick={this.showFourthOption}>За все время</span>
+                     </div>
+                  </div>
+                  <SearchForm searching={this.searching} />
+                  <IncomeForm addIncome={this.addIncome} />
+               </div>
+               
+               <div className="container__item container__item--z-index">
+                  <div className="list-place">
+                     <div className="list-wrapper">
+                     {
+                        this.state.fullIncomeList.map((item) => {
+                           return(
+                              <Income incomeSum={item.incomeSum} 
+                                 incomeInfo={item.incomeInfo}
+                                 incomeDate={item.incomeDate}
+                                 incomeId={item.id}
 
-                           key={item.id} 
+                                 key={item.id} 
 
-                           removeIncome={this.removeIncome}
-                           editIncome={this.editIncome} />
-                     )
-                  })
-               }
-               <IncomeForm addIncome={this.addIncome} />
-            </div>
-
-            <div className="month-list">
-               <IncomeMonth incomeList={this.state.initialIncomeList} />
+                                 removeIncome={this.removeIncome}
+                                 editIncome={this.editIncome} />
+                           )
+                        })
+                     }
+                     </div>
+                  </div>
+               </div>
+               <div className="container__item">
+                  <SideInfo incomeList={this.state.initialIncomeList} />
+               </div>
+               <div className="container__item">
+                  <div className="month-list">
+                     <IncomeMonth incomeList={this.state.initialIncomeList} />
+                  </div>
+               </div>
             </div>
 
             <div id="income-edit-form" className="income-edit-form" ref={this.incomeEditForm}>
@@ -361,19 +383,6 @@ class App extends Component{
                <span id="editFormCloseButton" className="close-button">Отменить</span>
                <p className="error-message-2" ref={this.errorMessage2}>Вы ввели неверные данные. Вы ввели неверные данные.</p>
             </div>
-
-            <div className="option-menu">
-               <h3 className="option-menu-header">Опции</h3>
-               <div className="option-menu-item">
-                  <span className="option-button" onClick={this.showFirstOption}>За 1 месяц</span>
-                  <span className="option-button" onClick={this.showSecondOption}>За 3 месяца</span>
-                  <span className="option-button" onClick={this.showThirdOption}>За 6 месяцев</span>
-                  <span className="option-button" onClick={this.showFourthOption}>За все время</span>
-               </div>
-               <SearchForm searching={this.searching} />
-            </div>
-
-            <SideInfo incomeList={this.state.initialIncomeList} />
          </div>
       );
    }

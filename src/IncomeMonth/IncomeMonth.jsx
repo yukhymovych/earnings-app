@@ -28,7 +28,7 @@ class IncomeMonth extends Component {
             return (
                <div className="income-month">
                   <p className="income-month__date">{ item.monthNum } { item.monthYear }</p>
-                  <p className="income-month__sum">{ item.monthSum }</p>
+                  <p className="income-month__sum">{ item.monthSum } грн</p>
                </div>
             )
          })  

@@ -98,7 +98,7 @@ export function statsCalculation (data) {
          selectedMonths[i].monthNum = monthsNames[selectedMonths[i].monthNum];
       }
    }
-   console.log(selectedMonths);
+
    resultData = {
       avgSum: tempAvgSum, 
       bestMonth: tempBestMonth,

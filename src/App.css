@@ -1,22 +1,41 @@
 .app-wrapper {
-   background: linear-gradient(230deg, #5F6985, #1C2232);
+   background: linear-gradient(230deg, rgb(120, 129, 146), rgb(36, 44, 59));
    min-height: 100vh;
    display: flex;
+   justify-content: center;
    color: white;
+}
+.container{
    position: relative;
+   width: 1400px;
+   margin: 100px 0;
+   display: flex;
+   justify-content: space-between;
+}
+.container__item{
+   width: 22%;
+}
+.container__item--z-index{
+   z-index: 1;
+}
+.container__item:nth-child(1),
+.container__item:nth-child(3){
+   position: sticky;
+   top: 100px;
+   align-self: flex-start; 
 }
 
 /*////////////////////////////////////////////////////////////*/
 
-.list-place{
-   position: relative;
-   padding-left: 430px;
+.list-wrapper,
+.month-list{
+   display: flex;
+   flex-direction: column-reverse;
 }
 
 /*////////////////////////////////////////////////////////////*/
 
 .income-edit-form{
-   width: 350px;
    background: linear-gradient(-45deg, rgba(15, 15, 15, 1) 20%, #4e789b 170%);
    position: fixed;
    border-radius: 10px;
@@ -26,6 +45,7 @@
    padding: 20px 30px;
    opacity: 0;
    visibility: hidden;
+   z-index: 1;
    transition: 0.5s ease-in-out;
 }
 .edit-form-header{
@@ -56,23 +76,23 @@
 }
 
 /*////////////////////////////////////////////////////////////*/
-
+.option-menu-header{
+   padding: 30px 0 0 30px;
+   margin-top: 0;
+}
 .option-menu{
-   background: linear-gradient(225deg, #282d43, #16192C);
-   position: fixed;
-   top: 50px;
-   left: 100px;
-   width: 300px;
-   border-radius: 7px;
+   background: linear-gradient(225deg, rgb(66, 69, 85), rgb(24, 25, 31));
+   box-shadow: 0 10px 12px -5px rgba(0,0,0,0.4);
+   border-radius: 10px;
 }
 .option-menu-item{
-   padding: 40px 0;
+   padding: 10px 0 40px 0;
 }
 .option-button{
    display: block;
    cursor: pointer;
    color: white;
-   padding: 14px 20px;
+   padding: 14px 30px;
    transition: 0.5s ease;
 }
 .option-button:hover{

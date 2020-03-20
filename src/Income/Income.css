@@ -1,44 +1,46 @@
 .income-item{
-   background: linear-gradient(225deg, #272C42, #16192C);
+   background: linear-gradient(225deg, rgb(66, 69, 85), rgb(24, 25, 31));
    padding: 30px;
-   margin: 30px 0;
+   margin: 0 0 20px 0;
    border-radius: 10px;
-   box-shadow: 0 10px 12px -5px #202237;
+   box-shadow: 0 10px 12px -5px rgba(0,0,0,0.4);
    position: relative;
-   width: 350px;
    transition: 0.5s ease;
 }
 .income-item:hover{
-   box-shadow: 0 20px 22px -5px #202237;
+   box-shadow: 0 20px 22px -5px rgba(0,0,0,0.4);
    transform: translateY(-7px);
 }
 .income-sum{
    position: absolute;
    right: 30px;
    top: 10px;
-   font-size: 15px;
-   color: #bcbcbc;
+   font-weight: bold;
+   font-size: 18px;
+   color: #ffffff;
 }
 .income-sum span{
    font-size: 13px;
 }
 .income-info{
    font-weight: 400;
-   margin: 25px 0 0 0;
+   margin: 25px 30px 0 0;
+   color: rgba(255,255,255,0.6);
 }
 .income-date{
    display: inline;
-   background: linear-gradient(225deg, #f48c8d, #FE2D64);
+   background: linear-gradient(225deg, #ffffff, rgb(168, 168, 168));
    font-size: 13px;
    letter-spacing: 1px;
    padding: 4px 13px;
-   border-radius: 6px;
+   border-radius: 3px;
    margin: 0;
+   color: #222;
 }
 .closebtn, .editbtn{
    display: block;
    text-align: center;
-   background: linear-gradient(225deg, #202237, #16192C);
+   background: linear-gradient(225deg, rgb(66, 69, 85), rgb(24, 25, 31));
    padding: 10px 20px;
    margin-top: 10px;
    cursor: pointer;

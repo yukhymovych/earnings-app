@@ -1,0 +1,26 @@
+.income-month{
+   background: linear-gradient(225deg, rgb(84, 87, 107), rgb(35, 37, 46));
+   padding: 30px;
+   margin: 0 0 20px 0;
+   border-radius: 10px;
+   box-shadow: 0 10px 12px -5px rgba(0,0,0,0.4);
+   position: relative;
+}
+.income-month__date{
+   display: inline;
+   background: linear-gradient(225deg, #ffffff, rgb(168, 168, 168));
+   font-size: 13px;
+   letter-spacing: 1px;
+   padding: 4px 13px;
+   border-radius: 3px;
+   margin: 0;
+   color: #222;
+}
+.income-month__sum{
+   position: absolute;
+   right: 30px;
+   top: 10px;
+   font-weight: bold;
+   font-size: 18px;
+   color: #ffffff;
+}

@@ -22,12 +22,12 @@ class SearchForm extends Component {
    render(){
       return(
          <div className="search-form">
-            <input className=""
+            <h3 className="search__header">Поиск записи</h3>
+            <input className="search__input"
             placeholder="Дата, описание или сумма" 
             value={this.state.inquiry}
             onChange={this.handleInquiryInput} />
-
-            <button className=""
+            <button className="search__btn"
             onClick={this.inquiryInputStart}>Поиск</button>
          </div>
       )
