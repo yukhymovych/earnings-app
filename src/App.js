@@ -7,6 +7,7 @@ import SearchForm from './SearchForm/SearchForm';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import IncomeMonth from './IncomeMonth/IncomeMonth';
+import Login from './Login/Login';
 
 import { config } from './Config/config';
 import firebase from 'firebase/app';
@@ -27,6 +28,8 @@ class App extends Component{
          initialIncomeList: [],
          fullIncomeList: [],
          editIncomeDate: '',
+         password: '1',
+         passwordCorrect: false,
       }
    }
 
@@ -321,70 +324,87 @@ class App extends Component{
       }
    }
 
+   checkPassword = (passwordText) => {
+      if (passwordText === this.state.password) {
+         this.setState({
+            passwordCorrect: true,
+         });
+      }
+   }
+
 
    render(){
-      return(
-         <div className="app-wrapper">
-            <div className="container">
-               <div className="container__item">
-                  <div className="option-menu">
-                     <h3 className="option-menu-header">Отображения записей</h3>
-                     <div className="option-menu-item">
-                        <span className="option-button" onClick={this.showFirstOption}>За 1 месяц</span>
-                        <span className="option-button" onClick={this.showSecondOption}>За 3 месяца</span>
-                        <span className="option-button" onClick={this.showThirdOption}>За 6 месяцев</span>
-                        <span className="option-button" onClick={this.showFourthOption}>За все время</span>
+      if (this.state.passwordCorrect === false){
+         return(
+            <div className="app-wrapper">
+               <Login password={this.state.password} checkPassword={this.checkPassword} />
+            </div>
+         );
+      }
+      else {
+         return(
+            <div className="app-wrapper">
+               <div className="container">
+                  <div className="container__item">
+                     <div className="option-menu">
+                        <h3 className="option-menu-header">Отображения записей</h3>
+                        <div className="option-menu-item">
+                           <span className="option-button" onClick={this.showFirstOption}>За 1 месяц</span>
+                           <span className="option-button" onClick={this.showSecondOption}>За 3 месяца</span>
+                           <span className="option-button" onClick={this.showThirdOption}>За 6 месяцев</span>
+                           <span className="option-button" onClick={this.showFourthOption}>За все время</span>
+                        </div>
+                     </div>
+                     <SearchForm searching={this.searching} />
+                     <IncomeForm addIncome={this.addIncome} />
+                  </div>
+                  
+                  <div className="container__item container__item--z-index">
+                     <div className="list-place">
+                        <div className="list-wrapper">
+                        {
+                           this.state.fullIncomeList.map((item) => {
+                              return(
+                                 <Income incomeSum={item.incomeSum} 
+                                    incomeInfo={item.incomeInfo}
+                                    incomeDate={item.incomeDate}
+                                    incomeId={item.id}
+
+                                    key={item.id} 
+
+                                    removeIncome={this.removeIncome}
+                                    editIncome={this.editIncome} />
+                              )
+                           })
+                        }
+                        </div>
                      </div>
                   </div>
-                  <SearchForm searching={this.searching} />
-                  <IncomeForm addIncome={this.addIncome} />
-               </div>
-               
-               <div className="container__item container__item--z-index">
-                  <div className="list-place">
-                     <div className="list-wrapper">
-                     {
-                        this.state.fullIncomeList.map((item) => {
-                           return(
-                              <Income incomeSum={item.incomeSum} 
-                                 incomeInfo={item.incomeInfo}
-                                 incomeDate={item.incomeDate}
-                                 incomeId={item.id}
-
-                                 key={item.id} 
-
-                                 removeIncome={this.removeIncome}
-                                 editIncome={this.editIncome} />
-                           )
-                        })
-                     }
+                  <div className="container__item">
+                     <SideInfo incomeList={this.state.initialIncomeList} />
+                  </div>
+                  <div className="container__item">
+                     <div className="month-list">
+                        <IncomeMonth incomeList={this.state.initialIncomeList} />
                      </div>
                   </div>
                </div>
-               <div className="container__item">
-                  <SideInfo incomeList={this.state.initialIncomeList} />
-               </div>
-               <div className="container__item">
-                  <div className="month-list">
-                     <IncomeMonth incomeList={this.state.initialIncomeList} />
-                  </div>
-               </div>
-            </div>
 
-            <div id="income-edit-form" className="income-edit-form" ref={this.incomeEditForm}>
-               <h3 className="edit-form-header">Редактирование записи</h3>
-               <input id="edit-form-sum" type="text" />
-               <DatePicker id="edit-form-date"
-               selected={this.state.editIncomeDate}
-               onChange={this.handleDateInput}
-               dateFormat="dd.MM.yyyy" />
-               <textarea id="edit-form-info" type="text" />
-               <span id="editFormSaveButton" className="save-button">Сохранить</span>
-               <span id="editFormCloseButton" className="close-button">Отменить</span>
-               <p className="error-message-2" ref={this.errorMessage2}>Вы ввели неверные данные. Вы ввели неверные данные.</p>
+               <div id="income-edit-form" className="income-edit-form" ref={this.incomeEditForm}>
+                  <h3 className="edit-form-header">Редактирование записи</h3>
+                  <input id="edit-form-sum" type="text" />
+                  <DatePicker id="edit-form-date"
+                  selected={this.state.editIncomeDate}
+                  onChange={this.handleDateInput}
+                  dateFormat="dd.MM.yyyy" />
+                  <textarea id="edit-form-info" type="text" />
+                  <span id="editFormSaveButton" className="save-button">Сохранить</span>
+                  <span id="editFormCloseButton" className="close-button">Отменить</span>
+                  <p className="error-message-2" ref={this.errorMessage2}>Вы ввели неверные данные. Вы ввели неверные данные.</p>
+               </div>
             </div>
-         </div>
-      );
+         );
+      }
    }
 }
 
