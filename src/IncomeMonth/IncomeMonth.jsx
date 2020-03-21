@@ -10,19 +10,28 @@ class IncomeMonth extends Component {
          fullMonthList: []
       }
    }
-   componentDidUpdate (prevProps) {
+
+   monthsCalculation = () => {
       let tempObject = {};
 
+      tempObject = logic.statsCalculation(this.props.incomeList);
+      
+      this.setState({
+         fullMonthList: tempObject.monthsList,
+      });
+   }
+
+   componentDidMount() {
+      this.monthsCalculation();
+   }
+
+   componentDidUpdate(prevProps) {
       if (prevProps !== this.props) {
-         tempObject = logic.statsCalculation(this.props.incomeList);
-         
-         this.setState({
-            fullMonthList: tempObject.monthsList,
-         });
+         this.monthsCalculation();
       }
    }
 
-   render () { 
+   render() { 
       return (
          this.state.fullMonthList.map((item) => {
             return (

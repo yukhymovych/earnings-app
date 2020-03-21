@@ -13,19 +13,27 @@ class SideInfo extends Component{
       }
    }
 
-   componentDidUpdate(prevProps) {
+   sideInfoCalculation = () => {
       let tempObject = {};
 
-      if (prevProps !== this.props) {
-         tempObject = logic.statsCalculation(this.props.incomeList);
+      tempObject = logic.statsCalculation(this.props.incomeList);
+      
+      if (tempObject.worstMonth.monthNum !== undefined) {
+         this.setState({
+            avgSum: tempObject.avgSum,
+            bestMonth: tempObject.bestMonth,
+            worstMonth: tempObject.worstMonth,
+         });
+      }
+   }
 
-         if (tempObject.worstMonth.monthNum !== undefined) {
-            this.setState({
-               avgSum: tempObject.avgSum,
-               bestMonth: tempObject.bestMonth,
-               worstMonth: tempObject.worstMonth,
-            });
-         }
+   componentDidMount() {
+      this.sideInfoCalculation();
+   }
+
+   componentDidUpdate(prevProps) {
+      if (prevProps !== this.props) {
+         this.sideInfoCalculation();
       }
    }
 
