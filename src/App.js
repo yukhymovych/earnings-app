@@ -28,7 +28,7 @@ class App extends Component{
          initialIncomeList: [],
          fullIncomeList: [],
          editIncomeDate: '',
-         password: '1',
+         password: 'Openforme248',
          passwordCorrect: false,
       }
    }
@@ -43,6 +43,7 @@ class App extends Component{
             incomeInfo: snap.val().incomeInfo,
             incomeDate: snap.val().incomeDate,
          });
+
          this.setState({
             initialIncomeList: incomeArray,
             fullIncomeList: incomeArray
@@ -55,6 +56,7 @@ class App extends Component{
                incomeArray.splice(i, 1);
             }
          }
+
          this.setState({
             initialIncomeList: incomeArray,
             fullIncomeList: incomeArray
@@ -69,6 +71,7 @@ class App extends Component{
                incomeArray[i].incomeDate = snap.val().incomeDate;
             }
          }
+
          this.setState({
             initialIncomeList: incomeArray,
             fullIncomeList: incomeArray
@@ -177,7 +180,7 @@ class App extends Component{
 
    showFirstOption = () => {
       const incomeArray = [];
-      const shownIncomeArray = [...this.state.fullIncomeList];
+      const shownIncomeArray = [...this.state.initialIncomeList];
 
       let elementDate;
       let presentDate = new Date();
@@ -212,7 +215,7 @@ class App extends Component{
 
    showSecondOption = () => {
       const incomeArray = [];
-      const shownIncomeArray = [...this.state.fullIncomeList];
+      const shownIncomeArray = [...this.state.initialIncomeList];
 
       let elementDate;
       let presentDate = new Date();
@@ -248,7 +251,7 @@ class App extends Component{
 
    showThirdOption = () => {
       const incomeArray = [];
-      const shownIncomeArray = [...this.state.fullIncomeList];
+      const shownIncomeArray = [...this.state.initialIncomeList];
 
       let elementDate;
       let presentDate = new Date();
