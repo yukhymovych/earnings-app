@@ -19,7 +19,7 @@ class App extends Component{
       super(props);
      
       this.app = firebase.initializeApp(config);
-      this.database = this.app.database().ref().child('test'); //test
+      this.database = this.app.database().ref().child('income'); //need test for test output
 
       this.incomeEditForm = React.createRef();
       this.errorMessage2 = React.createRef();

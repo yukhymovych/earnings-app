@@ -40,7 +40,8 @@ class Login extends Component {
             <input className="login__input"
             placeholder="Введите пароль" 
             value={this.state.inputPassword}
-            onChange={this.handleInput} />
+            onChange={this.handleInput} 
+            type="password"/>
             <button className="login__btn"
             onClick={this.inputCheck}>Войти</button>
             <p className="login__msg" ref={this.msg}>Пароль верный</p>
